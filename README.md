@@ -1,5 +1,5 @@
 # Crypto_bot
-Crypto_bot 🤖 sending emergency updates if the selected currency is below a certain threshold, or just regular reports every 5 minutes. 💰 
+Crypto_bot 🤖 sending emergency updates if the selected currency is below a certain threshold you define, or just regular reports every 5 minutes to your Telegram. 💰 
 
 ## Background
 
