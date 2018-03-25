@@ -1,10 +1,10 @@
 # Crypto_bot
-Crypto_bot 🤖 sending emergency updates if the selected currency is below a certain threshold, or just regular reports every 5 minutes. 💰 
+Crypto_bot 🤖 sending emergency updates if the selected currency is below a certain threshold you define, or just regular reports every 5 minutes to your Telegram. 💰 
 
 ## Background
 
 I can easily fall into the situation where I staring at the screens waiting for currency updates real-time, so instead of wasting time on that, I've created a little bot with the help of Ruby, Telegram and IFTTT.
-For this one I've used
+For testing and validation I've used...
 
 ![](https://cdn.vox-cdn.com/thumbor/lddh05MIQrPTx2QL93RLRGZHfEM=/21x0:539x345/920x613/filters:focal(21x0:539x345):format(webp)/cdn.vox-cdn.com/assets/3727699/Dogecoin_logo.png)
 
