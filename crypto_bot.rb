@@ -82,7 +82,7 @@ def main
         end
 
         # Sleep for 5 minutes
-        sleep(100)
+        sleep(300)
     end
 end
 
