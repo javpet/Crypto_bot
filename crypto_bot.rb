@@ -2,7 +2,7 @@ require "http"
 require "json"
 
 # Change the ID in the URL to customize for another cryptocurrency
-DOGECOIN_API_URL = "https://api.coinmarketcap.com/v1/ticker/dogecoin/"
+# DOGECOIN_API_URL = "https://api.coinmarketcap.com/v1/ticker/dogecoin/"
 
 # # Dogecoin price threshold -- the price, where you still keep your sanitfy
 # DOGECOIN_PRICE_THRESHOLD = 0.0035
@@ -11,20 +11,19 @@ puts "------------------------"
 puts "Welcome to CryptoBot 🤖"
 puts "------------------------"
 
+def ask_currency
+  puts "Which cryptocurrency are you insterested in?"
+  @currency_interested = gets.chomp
+end
+
 def ask_threshold_price
   puts "What would be threshold(price) you would like to receive an emergency update message to buy / sell?"
   @threshold_price = gets.chomp.to_f
 
-  if @threshold_price.class != "Numeric"
-    puts "Please enter a number!"
-    @threshold_price = gets.chomp.to_f
-  end
-
-  return @threshold_price
 end
 
-def get_latest_dogecoin_price
-  response = HTTP.get(DOGECOIN_API_URL)
+def get_latest_coin_price
+  response = HTTP.get("https://api.coinmarketcap.com/v1/ticker/#{@currency_interested}/")
   response_json = JSON.parse(response)
 
   return response_json[0]["price_usd"].to_f
@@ -32,18 +31,18 @@ end
 
 def post_ifttt_webhook(event, value)
   # Change the IFTTT URL to your own URL -- GET YOUR OWN KEY AT: https://maker.ifttt.com/
-  ifttt_api_url = "https://maker.ifttt.com/trigger/#{event}/with/key/cGksoqk4UJjkyNTp3jV8aHnJXBrLj57AXsbOeqSxD9M"
+  ifttt_api_url = "https://maker.ifttt.com/trigger/#{event}/with/key/{{PLACE YOUR KEY HERE!!!}}"
 
   # The payload that will be sent to IFTTT service
-  HTTP.post(ifttt_api_url, :json => { value1: value })
+  HTTP.post(ifttt_api_url, :json => { value1: value, value2: @currency_interested })
 end
 
-def format_dogecoin_history(dogecoin_history)
+def format_coin_history(coin_history)
     rows = []
 
-    dogecoin_history.each do |dogecoin_price|
-        date = dogecoin_price[:date].strftime('%d.%m.%Y %H:%M')  # Formats the date into a string: '22.03.2018 15:09'
-        price = dogecoin_price[:price]
+    coin_history.each do |coin_price|
+        date = coin_price[:date].strftime('%d.%m.%Y %H:%M')  # Formats the date into a string: '22.03.2018 15:09'
+        price = coin_price[:price]
 
         # <b> (bold) tag creates bolded text in the Telegram message
         row = "#{date}: $<b>#{price}</b>"
@@ -55,37 +54,38 @@ def format_dogecoin_history(dogecoin_history)
 end
 
 def main
-    dogecoin_history = []
+    coin_history = []
 
     while true
 
-        puts "Status: Crypto bot is running on the machine!"
+        puts "Status: CryptoBot is running on the machine!"
 
-        price = get_latest_dogecoin_price
+        price = get_latest_coin_price
         time = Time.now
-        dogecoin_current_data = {date: time, price: price}
-        dogecoin_history << dogecoin_current_data
+        coin_current_data = {date: time, price: price}
+        coin_history << coin_current_data
 
 
         # Send an emergency notification
         if price < @threshold_price
-            post_ifttt_webhook("dogecoin_price_emergency", price)
+            post_ifttt_webhook("coin_price_emergency", price)
         end
 
         # Send a Telegram notification
         # Once we have 5 items in our dogecoin_history send an update
-        if dogecoin_history.count == 5
-            post_ifttt_webhook("dogecoin_price_update", format_dogecoin_history(dogecoin_history))
+        if coin_history.count == 5
+            post_ifttt_webhook("coin_price_update", format_coin_history(coin_history))
 
             puts "Message sent with latest prices -- #{time}"
             # Reset the history
-            dogecoin_history = []
+            coin_history = []
         end
 
         # Sleep for 5 minutes
-        sleep(300)
+        sleep(100)
     end
 end
 
+ask_currency()
 ask_threshold_price()
 main()
